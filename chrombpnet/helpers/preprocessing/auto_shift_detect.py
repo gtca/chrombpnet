@@ -11,6 +11,7 @@ import os
 from modisco.visualization import viz_sequence
 import chrombpnet.training.utils.one_hot as one_hot
 from chrombpnet.data import DefaultDataFile, get_default_data_path
+from tqdm import tqdm
 
 def parse_args():
     parser=argparse.ArgumentParser(description="Automatically detect enzyme shift of input BAM/fragment/tagAlign File")
@@ -121,11 +122,11 @@ def get_pwms(plus_reads, minus_reads, genome_file):
     plus_seqs = []
     minus_seqs = []
     with pyfaidx.Fasta(genome_file) as g:
-        for _, x in plus_reads.iterrows():
+        for _, x in tqdm(plus_reads.iterrows(), total=len(plus_reads)):
             cur = str(g[x['chr']][int(x['start'])-20:int(x['start'])+20])
             if len(cur)==40: # observed edge cases in non-canonical chr e.g. chrEBV
                 plus_seqs.append(cur)
-        for _, x in minus_reads.iterrows():
+        for _, x in tqdm(minus_reads.iterrows(), total=len(minus_reads)):
             cur = str(g[x['chr']][int(x['end'])-20:int(x['end'])+20])
             if len(cur)==40:
                 minus_seqs.append(cur)

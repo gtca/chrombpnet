@@ -4,6 +4,8 @@ import tensorflow as tf
 from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
 import chrombpnet.training.utils.losses as losses
+from tqdm import tqdm
+
 
 def filter_edge_regions(peaks_df, bw, width, peaks_bool):
     """
@@ -46,7 +48,7 @@ def get_seqs_cts(genome, bw, peaks_df, input_width=2114, output_width=1000):
     """
     vals = []
     seqs = []
-    for i, r in peaks_df.iterrows():
+    for i, r in tqdm(peaks_df.iterrows(), total=len(peaks_df)):
         sequence = str(genome[r['chr']][(r['start']+r['summit'] - input_width//2):(r['start'] + r['summit'] + input_width//2)])
         seqs.append(sequence)
         bigwig_vals=np.nan_to_num(bw.values(r['chr'], 
